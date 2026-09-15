@@ -1,0 +1,2 @@
+# Keep presentation notebooks in the repository without letting them dominate GitHub's language statistics.
+*.ipynb linguist-detectable=false
