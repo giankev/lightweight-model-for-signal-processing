@@ -2,6 +2,8 @@
 
 A compact neural receiver for OFDM frames with one pilot symbol followed by eight data symbols. It combines learned phase/CFO estimation with explicit signal correction and lightweight attention to recover soft bits for LDPC decoding.
 
+The synthetic communication link is built with **NVIDIA Sionna** components for modulation, OFDM processing, and 5G LDPC coding/decoding, while phase offset, carrier-frequency offset, and seeded AWGN are applied explicitly in the simulator.
+
 ## Problem
 
 OFDM receivers use pilot/reference symbols to estimate synchronization impairments. Reducing pilot density improves spectral efficiency, but gives the receiver fewer observations of phase and carrier frequency offset (CFO). In the **1-pilot / 8-data-symbol** regime, estimation error from the initial pilot causes residual phase drift across the subsequent data, making pilot-only synchronization unreliable in noise.
@@ -43,6 +45,7 @@ Compensation applies the inverse rotation. The ×1000 CFO scaling is numerical s
 
 | Item | Setting |
 | --- | --- |
+| Simulation backend | NVIDIA Sionna + explicit phase/CFO/AWGN impairments |
 | Waveform | OFDM; FFT 64, CP 16 samples |
 | Modulation | 16-QAM data; QPSK pilot |
 | Coding | 5G LDPC; 1024 information / 2048 coded bits; 15 decoder iterations |
@@ -127,7 +130,7 @@ Evaluation uses fresh seeds and a fixed LLR scale by default. A one-epoch smoke 
 
 ## Notes
 
-- Synthetic datasets are generated using Sionna.
+- The synthetic link uses **NVIDIA Sionna** for the communications stack; phase offset, CFO, and AWGN are injected explicitly by the simulator.
 - The experiment covers CFO, phase offset, and AWGN; it does not establish performance on multipath or over-the-air channels.
 - This is a research prototype, not a production receiver.
 - No dynamic SNR routing or classical-estimator injection is implemented or included in the comparison.
