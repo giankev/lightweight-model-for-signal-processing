@@ -1,170 +1,147 @@
-# Lightweight Physics-Informed Hybrid Receivers for OFDM and Single-Carrier Communications
+# Lightweight Physics-Informed Receiver for Pilot-Starved OFDM
 
-This repository contains the code developed for the study of **lightweight physics-informed neural receivers** for digital communications, with a focus on **16-QAM**, **5G LDPC coding**, and **receiver-side robustness under synchronization impairments**.
+A compact neural receiver for OFDM frames with one pilot symbol followed by eight data symbols. It combines learned phase/CFO estimation with explicit signal correction and lightweight attention to recover soft bits for LDPC decoding.
 
-The project investigates how **hybrid neural architectures** can improve receiver performance in the presence of impairments such as:
-- residual phase offset
-- carrier frequency offset (CFO)
-- additive noise
-- reduced pilot availability in OFDM settings
+## Problem
 
-The main idea is to combine:
-- **model-based signal processing**, where the physical structure is well known
-- **lightweight neural modules**, where classical estimation becomes brittle or suboptimal
+OFDM receivers use pilot/reference symbols to estimate synchronization impairments. Reducing pilot density improves spectral efficiency, but gives the receiver fewer observations of phase and carrier frequency offset (CFO). In the **1-pilot / 8-data-symbol** regime, estimation error from the initial pilot causes residual phase drift across the subsequent data, making pilot-only synchronization unreliable in noise.
 
-In particular, the repository includes experiments on:
-- **single-carrier transmission**
-- **OFDM transmission**
-- **standard pilot regimes**
-- **pilot-starved OFDM regimes**
-- **hybrid linear-attention receivers**
-- **CNN-based baselines**
-- **ablation studies and oracle variants**
+## Approach
 
-The implementation follows the physics-informed hybrid philosophy described in the project paper, where neural components estimate or support impairment-aware processing while preserving compatibility with conventional decoding pipelines such as **5G LDPC** :contentReference[oaicite:1]{index=1}
+The network learns physical impairments and residual corrections while known signal-processing operations stay explicit:
 
----
+```mermaid
+flowchart LR
+    A[Received I/Q] --> B[Neural phase/CFO estimation]
+    B --> C[Deterministic compensation]
+    C --> D[CP removal + FFT]
+    D --> E[Conv1D + LinearAttention]
+    E --> F[Soft bit outputs]
+    F --> G[5G LDPC decoder]
+```
+
+This physics-informed inductive bias reduces what the neural network must learn. Linear attention aggregates sequence context without constructing a full pairwise attention matrix.
+
+## Model
+
+- An MLP parameter estimator uses received pilot **and data** I/Q to regress phase and CFO.
+- Differentiable de-rotation, CP removal, orthonormal FFT, and frequency-bin shifting produce frequency-domain features.
+- Residual Conv1D blocks surround a lightweight `LinearAttention` block. FiLM-style scale/shift conditioning comes from the estimated physical parameters.
+- Attention applies softmax to queries across features and keys across positions, then computes `Q(KᵀV)`. It is not an ELU+1 kernel implementation.
+- An auxiliary I/Q reconstruction head supports training; a four-channel bit-logit head supplies soft information to the decoder.
+
+CFO is in **cycles/sample**, and `phi0` is the phase at full-frame sample zero:
+
+```text
+phase(t) = phi0 + 2*pi*CFO*t
+t_data = pilot_time_samples + local_data_index
+```
+
+Compensation applies the inverse rotation. The ×1000 CFO scaling is numerical scaling only. Training uses AdamW, cosine annealing, label smoothing, auxiliary I/Q and parameter losses, gradient clipping, and teacher forcing.
+
+## Experimental setup
+
+| Item | Setting |
+| --- | --- |
+| Waveform | OFDM; FFT 64, CP 16 samples |
+| Modulation | 16-QAM data; QPSK pilot |
+| Coding | 5G LDPC; 1024 information / 2048 coded bits; 15 decoder iterations |
+| Frame | 1 pilot + 8 data OFDM symbols; 720 time samples |
+| Impairments | Phase offset, CFO, AWGN |
+| Phase / CFO range | [−π, π] radians / [−2e−4, 2e−4] cycles/sample |
+| Historical Eb/N0 | 0–12 dB |
+| Training | 10,000 examples; 80% at 4–8 dB, 20% at 0–12 dB; 85/15 train/validation split |
+
+## Comparisons
+
+- **Classical DSP:** pilot-only CFO grid search and phase estimation, deterministic correction, APP demapping, and LDPC decoding.
+- **DeepRx (CNN):** a historical convolutional baseline for data-driven reception.
+- **DAT (attention):** a historical attention baseline with higher reported compute cost.
+- **Hybrid LA (ours):** physical compensation plus lightweight learned residual processing.
+
+Only the hybrid and classical receiver are implemented in the current package. Baseline names identify the original project's implementations, not newly reproduced external results.
+
+## Results
+
+**Historical experimental results from the original project experiments.**
+
+The corrected/refactored pipeline has **not been rerun**. These measurements used the original CFO correction, reused training subset seeds, and SNR-dependent neural LLR scaling. Current code corrects the CFO convention, separates random streams, and uses a fixed LLR scale (default 1.0). These are historical observations, not validated performance claims for current code.
+
+Original-seed evaluation (2,000 frames per SNR; seed 46, also used in training):
+
+| Method | Post-FEC BER @ 6 dB | Post-FEC BER @ 12 dB | BLER @ 12 dB |
+| --- | --- | --- | --- |
+| Classical DSP | 1.594e-01 | 8.593e-02 | 4.020e-01 |
+| DeepRx (CNN) | 1.477e-01 | 1.004e-02 | 7.400e-02 |
+| DAT (attention) | 3.037e-03 | 0.000e+00 | 0.000e+00 |
+| Hybrid LA (ours) | 3.765e-02 | 5.513e-03 | 1.050e-02 |
+
+Fresh-seed evaluation (1,024 frames per SNR; data seed 999, noise seed 888):
+
+| Method | Post-FEC BER @ 6 dB | Post-FEC BER @ 12 dB |
+| --- | --- | --- |
+| Classical DSP | 1.631e-01 | 8.704e-02 |
+| DeepRx (CNN) | 1.925e-01 | 3.396e-02 |
+| DAT (attention) | 4.243e-03 | 0.000e+00 |
+| Hybrid LA (ours) | 8.393e-02 | 3.025e-02 |
+
+DAT recorded zero errors at some sampled SNRs; this does not establish zero error probability. Fresh-seed BLER was not printed and is left missing in the CSV.
+
+Historical complexity:
+
+| Method | Parameters | Approx. MFLOPs | ms/sample |
+| --- | ---: | ---: | ---: |
+| Hybrid LA (ours) | 276,888 | 72.57 | 0.08764 |
+| DeepRx (CNN) | 297,924 | 343.72 | 0.12247 |
+| DAT (attention) | 289,652 | 147.81 | 0.45562 |
+
+FLOPs are approximate profiler outputs, not complete end-to-end operation counts. Latency measures neural forward passes at batch size 128, excluding LDPC and data generation; GPU models were not recorded in the selected outputs, so timings are not a controlled hardware comparison.
+
+The hybrid targets a decoding-performance/compute trade-off: it recorded lower BER than DeepRx at the displayed points with lower reported compute, while DAT recorded better decoding performance at higher compute cost. See [benchmark data](results/benchmark_results.csv), [complexity data](results/complexity_results.csv), and the results notebook for source cells, protocols, and full curves.
 
 ## Repository structure
 
-- `sionna_dg.py`
-  - Core simulation module used across the project
-  - Contains:
-    - communication system configuration
-    - dataset generation
-    - OFDM and single-carrier simulation
-    - impairment modeling
-    - classical baseline receiver
-    - utility functions for modulation, coding, demapping, and evaluation
+```text
+README.md
+requirements.txt
+src/lightweight_receiver/
+    __init__.py
+    config.py
+    simulation.py
+    models.py
+    training.py
+    evaluation.py
+    metrics.py
+scripts/
+    train.py
+    evaluate.py
+notebooks/
+    01_problem_and_signal.ipynb
+    02_results_and_comparison.ipynb
+results/
+    benchmark_results.csv
+    complexity_results.csv
+    figures/signal_12db.png
+tests/
+    test_pipeline.py
+```
 
-- `environment.txt`
-  - Environment notes and setup information
+## Quick start
 
-- `requirements.txt`
-  - Python dependencies required to run the notebooks
+```bash
+pip install -r requirements.txt
+# Small pipeline exercise; not a benchmark run:
+python scripts/train.py --num-examples 128 --epochs 1
+python scripts/evaluate.py --checkpoint checkpoints/receiver.pt --num-examples 128 --ebn0-db 6 12
+```
 
-- `plots/`
-  - Contains scripts and utilities used to generate the figures and plots included in the paper
+Evaluation defaults to experiment seed +10000 and a fresh noise seed; `--seed`, `--seed-noise`, and `--llr-scale` can override these. A one-epoch smoke checkpoint is not a trained benchmark model.
 
----
-
-## Notebooks
-
-- `Data_Generation.ipynb`
-  - Generates the datasets used for training and evaluation
-  - Builds synthetic communication data with Sionna-based simulations
-  - Supports both standard and starved OFDM settings
-
-- `dataset_creation.ipynb`
-  - Utility notebook for exporting and organizing the datasets used in the experiments
-
-- `Dataset_Examples.ipynb`
-  - Visualizes example samples from the generated datasets
-  - Includes received constellations, I/Q trajectories, and signal representations useful for analysis and for the paper figures
-
----
-
-### Single-carrier experiments
-
-- `Hybrid_NN_Single_Carrier.ipynb`
-  - Implements the hybrid neural receiver for the **single-carrier** scenario
-  - Studies coded 16-QAM transmission under phase and CFO impairments
-  - Compares neural processing against the classical baseline
-
----
-
-### OFDM standard regime
-
-- `Hybrid_LA_NN_OFDM.ipynb`
-  - Main hybrid OFDM receiver based on **Linear Attention**
-  - Combines impairment-aware estimation with lightweight neural soft-output processing
-  - This is one of the main notebooks of the repository
-
-- `Hybrid_CNN_OFDM.ipynb`
-  - Hybrid OFDM neural receiver using a CNN-based architecture
-  - Used as a comparison against the linear-attention variant
-
-- `CNN_OFDM.ipynb`
-  - Pure CNN-based OFDM receiver baseline
-  - Useful to compare fully learned convolutional processing against hybrid designs
-
-- `Oracle_LA_NN_OFDM.ipynb`
-  - Oracle version of the linear-attention hybrid model
-  - Uses ideal or ground-truth impairment information to isolate the performance gap due to estimation
-
-- `Classic_Param_LA_NN_OFDM.ipynb`
-  - Hybrid OFDM pipeline where classical parameter estimation is combined with the linear-attention neural receiver
-  - Useful to separate the contribution of neural soft processing from the contribution of impairment estimation
-
----
-
-### OFDM starved-pilot regime
-
-- `Hybrid_LA_NN_OFDM_Starved.ipynb`
-  - Main hybrid linear-attention receiver for the **pilot-starved OFDM** regime
-  - Focuses on reduced pilot density and the resulting difficulty of reliable synchronization and decoding
-
-- `Hybrid_SE_NN_OFDM_Starved.ipynb`
-  - Starved-regime hybrid receiver variant with **Squeeze-and-Excitation (SE)** style feature recalibration
-  - Used for architecture comparison
-
-- `Hybrid_GLU_NN_OFDM_Starved.ipynb`
-  - Starved-regime hybrid receiver variant with **Gated Linear Units (GLU)**
-  - Used for comparison with the linear-attention design
-
-- `Hybrid_LA_NN_Training_Ablation_Studies_Starved.ipynb`
-  - Ablation study notebook for the proposed starved-regime hybrid model
-  - Investigates the contribution of training choices and architectural components
-
-- `DeepRx_OFDM_Starved.ipynb`
-  - DeepRx-style baseline adapted to the pilot-starved OFDM setting
-  - Used as a neural comparison model
-
-- `DeepWaveform_OFDM_Starved.ipynb`
-  - DeepWaveform-style baseline for the pilot-starved setting
-  - Used for benchmarking against other neural architectures
-
-- `VanillaMHSA_OFDM_Starved.ipynb`
-  - Baseline OFDM receiver based on standard Multi-Head Self-Attention
-  - Used to compare quadratic-attention models against the proposed lightweight approach
-
-- `DAT_OFDM_Starved.ipynb`
-  - Dual-attention-transformer-inspired baseline for the starved OFDM setting
-  - Used as an additional attention-based comparison architecture
-
----
-
-## Study focus
-
-- Lightweight and deployable neural receivers
-- Physics-informed hybrid processing
-- Soft-output receiver design compatible with LDPC decoding
-- Standard and pilot-starved OFDM scenarios
-- Comparison between:
-  - classical baselines
-  - hybrid neural receivers
-  - CNN baselines
-  - attention-based baselines
-- Evaluation in terms of:
-  - BER
-  - BLER
-  - robustness to impairments
-  - model complexity
-  - computational efficiency
-
----
+Start with [Problem and signal](notebooks/01_problem_and_signal.ipynb), then [Results and comparison](notebooks/02_results_and_comparison.ipynb). Both are short presentation notebooks viewable on GitHub or in a Jupyter-capable editor; neither trains a model.
 
 ## Notes
 
-- The repository is organized around **reproducible link-level simulations**
-- The datasets are generated synthetically through the shared simulation backend
-- The notebooks are intentionally separated by scenario and architecture in order to make:
-  - comparisons clearer
-  - ablations easier to reproduce
-  - figures and tables for the paper easier to regenerate
-
----
-
-## Reference
-
-This repository accompanies the project study on lightweight physics-informed hybrid receivers for OFDM systems, including standard and pilot-starved regimes, as described in the associated paper draft :contentReference[oaicite:2]{index=2}
+- Synthetic datasets are generated using Sionna.
+- The experiment covers CFO, phase offset, and AWGN; it does not establish performance on multipath or over-the-air channels.
+- This is a research prototype, not a production receiver.
+- No dynamic SNR routing or classical-estimator injection is implemented or included in the comparison.

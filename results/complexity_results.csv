@@ -1,0 +1,4 @@
+model,parameters,macs_million,flops_million,latency_ms_per_sample,latency_std_ms,latency_batch_size,device,hardware,source_notebook,profile_cell,latency_cell,source_commit
+Hybrid LA (ours),276888,36.29,72.57,0.08764,0.00155,128,cuda,not recorded,09_Hybrid_LA_NN_OFDM_Starved.ipynb,14,27,a5a14588054df1e644b010cbc929c19f1f81d392
+DeepRx (CNN),297924,171.86,343.72,0.12247,0.00096,128,cuda,not recorded,13_DeepRx_OFDM_Starved.ipynb,14,20,a5a14588054df1e644b010cbc929c19f1f81d392
+DAT (attention),289652,73.91,147.81,0.45562,0.04679,128,cuda,not recorded,16_DAT_OFDM_Starved.ipynb,15,21,a5a14588054df1e644b010cbc929c19f1f81d392

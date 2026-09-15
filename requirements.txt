@@ -3,3 +3,5 @@ torch>=2.10.0
 # Keep the TensorFlow-based sionna.phy API used by the simulator.
 tensorflow>=2.14
 sionna>=1.0,<2.0
+# Presentation notebook plots.
+matplotlib>=3.4

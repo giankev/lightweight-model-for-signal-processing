@@ -1,0 +1,81 @@
+model,protocol,ebn0_db,ber_pre_coded,ber_post_info,bler_post_info,num_examples,data_seed,noise_seed,llr_policy,source_notebook,source_cell,source_commit
+Hybrid LA (ours),original_seed,0,0.2605,2.674e-01,1.000e+00,2000,46,46,historical_snr_heuristic,09_Hybrid_LA_NN_OFDM_Starved.ipynb,14,a5a14588054df1e644b010cbc929c19f1f81d392
+Classical DSP,original_seed,0,0.2897,2.851e-01,1.000e+00,2000,46,46,classical_app,09_Hybrid_LA_NN_OFDM_Starved.ipynb,14,a5a14588054df1e644b010cbc929c19f1f81d392
+Hybrid LA (ours),original_seed,1,,2.508e-01,1.000e+00,2000,46,46,historical_snr_heuristic,09_Hybrid_LA_NN_OFDM_Starved.ipynb,14,a5a14588054df1e644b010cbc929c19f1f81d392
+Classical DSP,original_seed,1,,2.713e-01,1.000e+00,2000,46,46,classical_app,09_Hybrid_LA_NN_OFDM_Starved.ipynb,14,a5a14588054df1e644b010cbc929c19f1f81d392
+Hybrid LA (ours),original_seed,2,0.2109,2.343e-01,1.000e+00,2000,46,46,historical_snr_heuristic,09_Hybrid_LA_NN_OFDM_Starved.ipynb,14,a5a14588054df1e644b010cbc929c19f1f81d392
+Classical DSP,original_seed,2,0.2507,2.581e-01,1.000e+00,2000,46,46,classical_app,09_Hybrid_LA_NN_OFDM_Starved.ipynb,14,a5a14588054df1e644b010cbc929c19f1f81d392
+Hybrid LA (ours),original_seed,3,,2.171e-01,1.000e+00,2000,46,46,historical_snr_heuristic,09_Hybrid_LA_NN_OFDM_Starved.ipynb,14,a5a14588054df1e644b010cbc929c19f1f81d392
+Classical DSP,original_seed,3,,2.446e-01,1.000e+00,2000,46,46,classical_app,09_Hybrid_LA_NN_OFDM_Starved.ipynb,14,a5a14588054df1e644b010cbc929c19f1f81d392
+Hybrid LA (ours),original_seed,4,0.1643,1.968e-01,1.000e+00,2000,46,46,historical_snr_heuristic,09_Hybrid_LA_NN_OFDM_Starved.ipynb,14,a5a14588054df1e644b010cbc929c19f1f81d392
+Classical DSP,original_seed,4,0.2148,2.311e-01,1.000e+00,2000,46,46,classical_app,09_Hybrid_LA_NN_OFDM_Starved.ipynb,14,a5a14588054df1e644b010cbc929c19f1f81d392
+Hybrid LA (ours),original_seed,5,,1.533e-01,9.930e-01,2000,46,46,historical_snr_heuristic,09_Hybrid_LA_NN_OFDM_Starved.ipynb,14,a5a14588054df1e644b010cbc929c19f1f81d392
+Classical DSP,original_seed,5,,2.052e-01,9.935e-01,2000,46,46,classical_app,09_Hybrid_LA_NN_OFDM_Starved.ipynb,14,a5a14588054df1e644b010cbc929c19f1f81d392
+Hybrid LA (ours),original_seed,6,0.1217,3.765e-02,4.440e-01,2000,46,46,historical_snr_heuristic,09_Hybrid_LA_NN_OFDM_Starved.ipynb,14,a5a14588054df1e644b010cbc929c19f1f81d392
+Classical DSP,original_seed,6,0.1827,1.594e-01,7.815e-01,2000,46,46,classical_app,09_Hybrid_LA_NN_OFDM_Starved.ipynb,14,a5a14588054df1e644b010cbc929c19f1f81d392
+Hybrid LA (ours),original_seed,7,,8.472e-03,4.900e-02,2000,46,46,historical_snr_heuristic,09_Hybrid_LA_NN_OFDM_Starved.ipynb,14,a5a14588054df1e644b010cbc929c19f1f81d392
+Classical DSP,original_seed,7,,1.355e-01,6.335e-01,2000,46,46,classical_app,09_Hybrid_LA_NN_OFDM_Starved.ipynb,14,a5a14588054df1e644b010cbc929c19f1f81d392
+Hybrid LA (ours),original_seed,8,0.0838,6.175e-03,1.800e-02,2000,46,46,historical_snr_heuristic,09_Hybrid_LA_NN_OFDM_Starved.ipynb,14,a5a14588054df1e644b010cbc929c19f1f81d392
+Classical DSP,original_seed,8,0.1540,1.210e-01,5.530e-01,2000,46,46,classical_app,09_Hybrid_LA_NN_OFDM_Starved.ipynb,14,a5a14588054df1e644b010cbc929c19f1f81d392
+Hybrid LA (ours),original_seed,9,,5.601e-03,1.450e-02,2000,46,46,historical_snr_heuristic,09_Hybrid_LA_NN_OFDM_Starved.ipynb,14,a5a14588054df1e644b010cbc929c19f1f81d392
+Classical DSP,original_seed,9,,1.100e-01,5.020e-01,2000,46,46,classical_app,09_Hybrid_LA_NN_OFDM_Starved.ipynb,14,a5a14588054df1e644b010cbc929c19f1f81d392
+Hybrid LA (ours),original_seed,10,0.0527,5.631e-03,1.350e-02,2000,46,46,historical_snr_heuristic,09_Hybrid_LA_NN_OFDM_Starved.ipynb,14,a5a14588054df1e644b010cbc929c19f1f81d392
+Classical DSP,original_seed,10,0.1283,1.009e-01,4.625e-01,2000,46,46,classical_app,09_Hybrid_LA_NN_OFDM_Starved.ipynb,14,a5a14588054df1e644b010cbc929c19f1f81d392
+Hybrid LA (ours),original_seed,11,,5.623e-03,1.200e-02,2000,46,46,historical_snr_heuristic,09_Hybrid_LA_NN_OFDM_Starved.ipynb,14,a5a14588054df1e644b010cbc929c19f1f81d392
+Classical DSP,original_seed,11,,9.285e-02,4.270e-01,2000,46,46,classical_app,09_Hybrid_LA_NN_OFDM_Starved.ipynb,14,a5a14588054df1e644b010cbc929c19f1f81d392
+Hybrid LA (ours),original_seed,12,0.0312,5.513e-03,1.050e-02,2000,46,46,historical_snr_heuristic,09_Hybrid_LA_NN_OFDM_Starved.ipynb,14,a5a14588054df1e644b010cbc929c19f1f81d392
+Classical DSP,original_seed,12,0.1066,8.593e-02,4.020e-01,2000,46,46,classical_app,09_Hybrid_LA_NN_OFDM_Starved.ipynb,14,a5a14588054df1e644b010cbc929c19f1f81d392
+Hybrid LA (ours),fresh_seed,0,,2.878e-01,,1024,999,888,historical_snr_heuristic,09_Hybrid_LA_NN_OFDM_Starved.ipynb,27,a5a14588054df1e644b010cbc929c19f1f81d392
+Classical DSP,fresh_seed,0,,2.858e-01,,1024,999,888,classical_app,09_Hybrid_LA_NN_OFDM_Starved.ipynb,27,a5a14588054df1e644b010cbc929c19f1f81d392
+Hybrid LA (ours),fresh_seed,2,,2.532e-01,,1024,999,888,historical_snr_heuristic,09_Hybrid_LA_NN_OFDM_Starved.ipynb,27,a5a14588054df1e644b010cbc929c19f1f81d392
+Classical DSP,fresh_seed,2,,2.588e-01,,1024,999,888,classical_app,09_Hybrid_LA_NN_OFDM_Starved.ipynb,27,a5a14588054df1e644b010cbc929c19f1f81d392
+Hybrid LA (ours),fresh_seed,4,,2.162e-01,,1024,999,888,historical_snr_heuristic,09_Hybrid_LA_NN_OFDM_Starved.ipynb,27,a5a14588054df1e644b010cbc929c19f1f81d392
+Classical DSP,fresh_seed,4,,2.322e-01,,1024,999,888,classical_app,09_Hybrid_LA_NN_OFDM_Starved.ipynb,27,a5a14588054df1e644b010cbc929c19f1f81d392
+Hybrid LA (ours),fresh_seed,6,,8.393e-02,,1024,999,888,historical_snr_heuristic,09_Hybrid_LA_NN_OFDM_Starved.ipynb,27,a5a14588054df1e644b010cbc929c19f1f81d392
+Classical DSP,fresh_seed,6,,1.631e-01,,1024,999,888,classical_app,09_Hybrid_LA_NN_OFDM_Starved.ipynb,27,a5a14588054df1e644b010cbc929c19f1f81d392
+Hybrid LA (ours),fresh_seed,8,,3.588e-02,,1024,999,888,historical_snr_heuristic,09_Hybrid_LA_NN_OFDM_Starved.ipynb,27,a5a14588054df1e644b010cbc929c19f1f81d392
+Classical DSP,fresh_seed,8,,1.216e-01,,1024,999,888,classical_app,09_Hybrid_LA_NN_OFDM_Starved.ipynb,27,a5a14588054df1e644b010cbc929c19f1f81d392
+Hybrid LA (ours),fresh_seed,10,,3.093e-02,,1024,999,888,historical_snr_heuristic,09_Hybrid_LA_NN_OFDM_Starved.ipynb,27,a5a14588054df1e644b010cbc929c19f1f81d392
+Classical DSP,fresh_seed,10,,1.016e-01,,1024,999,888,classical_app,09_Hybrid_LA_NN_OFDM_Starved.ipynb,27,a5a14588054df1e644b010cbc929c19f1f81d392
+Hybrid LA (ours),fresh_seed,12,,3.025e-02,,1024,999,888,historical_snr_heuristic,09_Hybrid_LA_NN_OFDM_Starved.ipynb,27,a5a14588054df1e644b010cbc929c19f1f81d392
+Classical DSP,fresh_seed,12,,8.704e-02,,1024,999,888,classical_app,09_Hybrid_LA_NN_OFDM_Starved.ipynb,27,a5a14588054df1e644b010cbc929c19f1f81d392
+DeepRx (CNN),original_seed,0,0.3062,3.098e-01,1.000e+00,2000,46,46,historical_snr_heuristic,13_DeepRx_OFDM_Starved.ipynb,14,a5a14588054df1e644b010cbc929c19f1f81d392
+DeepRx (CNN),original_seed,1,,2.827e-01,1.000e+00,2000,46,46,historical_snr_heuristic,13_DeepRx_OFDM_Starved.ipynb,14,a5a14588054df1e644b010cbc929c19f1f81d392
+DeepRx (CNN),original_seed,2,0.2415,2.595e-01,1.000e+00,2000,46,46,historical_snr_heuristic,13_DeepRx_OFDM_Starved.ipynb,14,a5a14588054df1e644b010cbc929c19f1f81d392
+DeepRx (CNN),original_seed,3,,2.380e-01,1.000e+00,2000,46,46,historical_snr_heuristic,13_DeepRx_OFDM_Starved.ipynb,14,a5a14588054df1e644b010cbc929c19f1f81d392
+DeepRx (CNN),original_seed,4,0.1876,2.188e-01,1.000e+00,2000,46,46,historical_snr_heuristic,13_DeepRx_OFDM_Starved.ipynb,14,a5a14588054df1e644b010cbc929c19f1f81d392
+DeepRx (CNN),original_seed,5,,1.971e-01,1.000e+00,2000,46,46,historical_snr_heuristic,13_DeepRx_OFDM_Starved.ipynb,14,a5a14588054df1e644b010cbc929c19f1f81d392
+DeepRx (CNN),original_seed,6,0.1444,1.477e-01,9.550e-01,2000,46,46,historical_snr_heuristic,13_DeepRx_OFDM_Starved.ipynb,14,a5a14588054df1e644b010cbc929c19f1f81d392
+DeepRx (CNN),original_seed,7,,7.030e-02,5.185e-01,2000,46,46,historical_snr_heuristic,13_DeepRx_OFDM_Starved.ipynb,14,a5a14588054df1e644b010cbc929c19f1f81d392
+DeepRx (CNN),original_seed,8,0.1101,3.858e-02,2.825e-01,2000,46,46,historical_snr_heuristic,13_DeepRx_OFDM_Starved.ipynb,14,a5a14588054df1e644b010cbc929c19f1f81d392
+DeepRx (CNN),original_seed,9,,2.411e-02,1.675e-01,2000,46,46,historical_snr_heuristic,13_DeepRx_OFDM_Starved.ipynb,14,a5a14588054df1e644b010cbc929c19f1f81d392
+DeepRx (CNN),original_seed,10,0.0839,1.719e-02,1.210e-01,2000,46,46,historical_snr_heuristic,13_DeepRx_OFDM_Starved.ipynb,14,a5a14588054df1e644b010cbc929c19f1f81d392
+DeepRx (CNN),original_seed,11,,1.321e-02,9.550e-02,2000,46,46,historical_snr_heuristic,13_DeepRx_OFDM_Starved.ipynb,14,a5a14588054df1e644b010cbc929c19f1f81d392
+DeepRx (CNN),original_seed,12,0.0661,1.004e-02,7.400e-02,2000,46,46,historical_snr_heuristic,13_DeepRx_OFDM_Starved.ipynb,14,a5a14588054df1e644b010cbc929c19f1f81d392
+DeepRx (CNN),fresh_seed,0,,3.247e-01,,1024,999,888,historical_snr_heuristic,13_DeepRx_OFDM_Starved.ipynb,20,a5a14588054df1e644b010cbc929c19f1f81d392
+DeepRx (CNN),fresh_seed,2,,2.756e-01,,1024,999,888,historical_snr_heuristic,13_DeepRx_OFDM_Starved.ipynb,20,a5a14588054df1e644b010cbc929c19f1f81d392
+DeepRx (CNN),fresh_seed,4,,2.358e-01,,1024,999,888,historical_snr_heuristic,13_DeepRx_OFDM_Starved.ipynb,20,a5a14588054df1e644b010cbc929c19f1f81d392
+DeepRx (CNN),fresh_seed,6,,1.925e-01,,1024,999,888,historical_snr_heuristic,13_DeepRx_OFDM_Starved.ipynb,20,a5a14588054df1e644b010cbc929c19f1f81d392
+DeepRx (CNN),fresh_seed,8,,9.540e-02,,1024,999,888,historical_snr_heuristic,13_DeepRx_OFDM_Starved.ipynb,20,a5a14588054df1e644b010cbc929c19f1f81d392
+DeepRx (CNN),fresh_seed,10,,5.160e-02,,1024,999,888,historical_snr_heuristic,13_DeepRx_OFDM_Starved.ipynb,20,a5a14588054df1e644b010cbc929c19f1f81d392
+DeepRx (CNN),fresh_seed,12,,3.396e-02,,1024,999,888,historical_snr_heuristic,13_DeepRx_OFDM_Starved.ipynb,20,a5a14588054df1e644b010cbc929c19f1f81d392
+DAT (attention),original_seed,0,0.2584,2.649e-01,1.000e+00,2000,46,46,historical_snr_heuristic,16_DAT_OFDM_Starved.ipynb,15,a5a14588054df1e644b010cbc929c19f1f81d392
+DAT (attention),original_seed,1,,2.466e-01,1.000e+00,2000,46,46,historical_snr_heuristic,16_DAT_OFDM_Starved.ipynb,15,a5a14588054df1e644b010cbc929c19f1f81d392
+DAT (attention),original_seed,2,0.2050,2.284e-01,1.000e+00,2000,46,46,historical_snr_heuristic,16_DAT_OFDM_Starved.ipynb,15,a5a14588054df1e644b010cbc929c19f1f81d392
+DAT (attention),original_seed,3,,2.090e-01,1.000e+00,2000,46,46,historical_snr_heuristic,16_DAT_OFDM_Starved.ipynb,15,a5a14588054df1e644b010cbc929c19f1f81d392
+DAT (attention),original_seed,4,0.1556,1.857e-01,1.000e+00,2000,46,46,historical_snr_heuristic,16_DAT_OFDM_Starved.ipynb,15,a5a14588054df1e644b010cbc929c19f1f81d392
+DAT (attention),original_seed,5,,1.190e-01,9.740e-01,2000,46,46,historical_snr_heuristic,16_DAT_OFDM_Starved.ipynb,15,a5a14588054df1e644b010cbc929c19f1f81d392
+DAT (attention),original_seed,6,0.1108,3.037e-03,1.170e-01,2000,46,46,historical_snr_heuristic,16_DAT_OFDM_Starved.ipynb,15,a5a14588054df1e644b010cbc929c19f1f81d392
+DAT (attention),original_seed,7,,0.000e+00,0.000e+00,2000,46,46,historical_snr_heuristic,16_DAT_OFDM_Starved.ipynb,15,a5a14588054df1e644b010cbc929c19f1f81d392
+DAT (attention),original_seed,8,0.0702,0.000e+00,0.000e+00,2000,46,46,historical_snr_heuristic,16_DAT_OFDM_Starved.ipynb,15,a5a14588054df1e644b010cbc929c19f1f81d392
+DAT (attention),original_seed,9,,0.000e+00,0.000e+00,2000,46,46,historical_snr_heuristic,16_DAT_OFDM_Starved.ipynb,15,a5a14588054df1e644b010cbc929c19f1f81d392
+DAT (attention),original_seed,10,0.0370,0.000e+00,0.000e+00,2000,46,46,historical_snr_heuristic,16_DAT_OFDM_Starved.ipynb,15,a5a14588054df1e644b010cbc929c19f1f81d392
+DAT (attention),original_seed,11,,0.000e+00,0.000e+00,2000,46,46,historical_snr_heuristic,16_DAT_OFDM_Starved.ipynb,15,a5a14588054df1e644b010cbc929c19f1f81d392
+DAT (attention),original_seed,12,0.0149,0.000e+00,0.000e+00,2000,46,46,historical_snr_heuristic,16_DAT_OFDM_Starved.ipynb,15,a5a14588054df1e644b010cbc929c19f1f81d392
+DAT (attention),fresh_seed,0,,2.663e-01,,1024,999,888,historical_snr_heuristic,16_DAT_OFDM_Starved.ipynb,21,a5a14588054df1e644b010cbc929c19f1f81d392
+DAT (attention),fresh_seed,2,,2.290e-01,,1024,999,888,historical_snr_heuristic,16_DAT_OFDM_Starved.ipynb,21,a5a14588054df1e644b010cbc929c19f1f81d392
+DAT (attention),fresh_seed,4,,1.867e-01,,1024,999,888,historical_snr_heuristic,16_DAT_OFDM_Starved.ipynb,21,a5a14588054df1e644b010cbc929c19f1f81d392
+DAT (attention),fresh_seed,6,,4.243e-03,,1024,999,888,historical_snr_heuristic,16_DAT_OFDM_Starved.ipynb,21,a5a14588054df1e644b010cbc929c19f1f81d392
+DAT (attention),fresh_seed,8,,0.000e+00,,1024,999,888,historical_snr_heuristic,16_DAT_OFDM_Starved.ipynb,21,a5a14588054df1e644b010cbc929c19f1f81d392
+DAT (attention),fresh_seed,10,,0.000e+00,,1024,999,888,historical_snr_heuristic,16_DAT_OFDM_Starved.ipynb,21,a5a14588054df1e644b010cbc929c19f1f81d392
+DAT (attention),fresh_seed,12,,0.000e+00,,1024,999,888,historical_snr_heuristic,16_DAT_OFDM_Starved.ipynb,21,a5a14588054df1e644b010cbc929c19f1f81d392
