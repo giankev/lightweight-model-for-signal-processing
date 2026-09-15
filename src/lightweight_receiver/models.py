@@ -3,6 +3,26 @@ import torch
 from torch import nn
 from torch.nn import functional as F
 
+def compensate_data(
+    data_iq: torch.Tensor,
+    phi0: torch.Tensor,
+    cfo_cycles_per_sample: torch.Tensor,
+    pilot_time_samples: int,
+) -> torch.Tensor:
+    """Inverse-rotate [B, 2, T] data; phi0 [B] is radians at frame t=0.
+
+    CFO [B] is in cycles/sample. Return complex time-domain samples.
+    """
+    t_data = pilot_time_samples + torch.arange(
+        data_iq.size(-1), device=data_iq.device, dtype=data_iq.dtype
+    )
+    phase = phi0[:, None] + 2 * torch.pi * cfo_cycles_per_sample[:, None] * t_data
+    cos_t, sin_t = torch.cos(-phase), torch.sin(-phase)
+    real = data_iq[:, 0] * cos_t - data_iq[:, 1] * sin_t
+    imag = data_iq[:, 0] * sin_t + data_iq[:, 1] * cos_t
+    return torch.complex(real, imag)
+
+
 class LinearAttention(nn.Module):
     def __init__(self, dim, heads=4):
         super().__init__()
@@ -40,11 +60,12 @@ class ResidualBlock1D(nn.Module):
         return self.relu(x + self.bn2(self.conv2(self.relu(self.bn1(self.conv1(x))))))
 
 class HybridNeuralReceiverOFDM(nn.Module):
-    """Notebook receiver; retains its original CFO units and data-local time ramp."""
+    """Hybrid receiver estimating frame-start phase (radians) and CFO (cycles/sample)."""
     def __init__(self, seq_len=160, n_pilots=80, ofdm_fft_size=64, ofdm_cp_len=16):
         super().__init__()
         self.fft_size = ofdm_fft_size
         self.cp_len = ofdm_cp_len
+        self.pilot_time_samples = n_pilots
 
         in_dim = (2 * seq_len) + (2 * n_pilots)
         self.input_norm = nn.BatchNorm1d(in_dim)
@@ -76,6 +97,7 @@ class HybridNeuralReceiverOFDM(nn.Module):
 
         est_params = self.estimator(est_feats)
         est_phi = est_params[:, 0]
+        # Numerical regression scaling only; physical output remains cycles/sample.
         est_cfo = est_params[:, 1] / 1000.0
 
         if gt_phi is not None and mix_ratio < 1.0:
@@ -88,14 +110,7 @@ class HybridNeuralReceiverOFDM(nn.Module):
         z = self.latent_proj(z_input)
 
         B, _, L = x.shape
-        t = torch.arange(L, device=x.device).float().unsqueeze(0)
-        # Preserve notebook behavior: no 2*pi factor or pilot-time offset.
-        phase_ramp = phi.unsqueeze(1) + (cfo.unsqueeze(1) * t)
-        cos_t, sin_t = torch.cos(-phase_ramp), torch.sin(-phase_ramp)
-        r_I = x[:, 0, :] * cos_t - x[:, 1, :] * sin_t
-        r_Q = x[:, 0, :] * sin_t + x[:, 1, :] * cos_t
-
-        x_comp = torch.complex(r_I, r_Q)
+        x_comp = compensate_data(x, phi, cfo, self.pilot_time_samples)
         n_sym = L // (self.fft_size + self.cp_len)
         x_sym = x_comp.reshape(B, n_sym, self.fft_size + self.cp_len)
 

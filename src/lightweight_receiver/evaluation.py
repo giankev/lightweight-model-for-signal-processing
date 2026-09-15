@@ -1,4 +1,4 @@
-"""Classical baseline and calibrated neural LDPC evaluation."""
+"""Classical baseline and neural LDPC evaluation."""
 from __future__ import annotations
 from dataclasses import replace
 from typing import Any, Dict
@@ -89,8 +89,18 @@ def classical_receiver(cfg: SimConfig, full: Dict[str, Any]) -> Dict[str, Any]:
 
 
 def evaluate(model, cfg: SimConfig, ebn0_values=range(13), batch_size: int = 128,
-             device: str = "cpu") -> list[dict]:
-    """Compare receivers on identical frames, using notebook LLR calibration."""
+             device: str = "cpu", llr_scale: float = 1.0,
+             seed: int | None = None, seed_noise: int | None = None) -> list[dict]:
+    """Compare on fresh frames with one fixed positive neural logit scale.
+
+    cfg.seed is the experiment seed. Evaluation defaults to seed + 10000;
+    noise defaults to the chosen evaluation seed + 10000, ignoring training noise.
+    """
+    eval_seed = cfg.seed + 10000 if seed is None else seed
+    noise_seed = eval_seed + 10000 if seed_noise is None else seed_noise
+    cfg = replace(cfg, seed=eval_seed, seed_noise=noise_seed)
+    if not np.isfinite(llr_scale) or llr_scale <= 0:
+        raise ValueError("llr_scale must be finite and positive.")
     if batch_size < 1:
         raise ValueError("Evaluation batch size must be positive.")
     model = model.to(device)
@@ -110,10 +120,10 @@ def evaluate(model, cfg: SimConfig, ebn0_values=range(13), batch_size: int = 128
                                       pilots[start:start + batch_size].to(device), mix_ratio=1.0)
                 logits.append(bits.permute(0, 2, 1).reshape(bits.size(0), -1).cpu().numpy())
         llr = np.concatenate(logits)
-        scale = 10 ** (ebno / 10.0) / 4.0 if ebno > 6 else 1.0 + ebno * 0.5
         _, _, _, _, decoder = build_sionna_blocks(cfg_eval)
-        decoded = (decoder(tf.convert_to_tensor(llr * scale, dtype=tf.float32)).numpy() > 0.5)
-        results.append({"ebn0_db": float(ebno), "classical": baseline, "neural": {
+        decoded = (decoder(tf.convert_to_tensor(llr * llr_scale, dtype=tf.float32)).numpy() > 0.5)
+        results.append({"ebn0_db": float(ebno), "seed": eval_seed,
+                        "seed_noise": noise_seed, "llr_scale": llr_scale, "classical": baseline, "neural": {
             "ber_pre_coded": bit_error_rate(llr > 0, ds["coded_bits"]),
             "ber_post_info": bit_error_rate(decoded, ds["info_bits"]),
             "bler_post_info": block_error_rate(decoded, ds["info_bits"]),

@@ -18,6 +18,7 @@ class SimConfig:
     phase_min: float = -np.pi
     phase_max: float = np.pi
     cfo_mode: str = "direct"
+    # Normalized CFO is cycles/sample; phi0 is radians at full-frame t=0.
     cfo_norm_min: float = -0.0002
     cfo_norm_max: float = 0.0002
     cfo_eps_min: float = -0.05
@@ -62,3 +63,11 @@ class SimConfig:
             raise ValueError("teacher_forcing_epochs must be positive.")
         if self.num_examples < 1 or self.epochs < 1 or self.batch_size < 2:
             raise ValueError("Require positive examples/epochs and batch_size >= 2.")
+
+
+def training_seeds(cfg: SimConfig) -> dict[str, int]:
+    """Explicit independent data, noise, split, and shuffle streams."""
+    noise_base = cfg.seed if cfg.seed_noise is None else cfg.seed_noise
+    return {"main": cfg.seed + 1, "broad": cfg.seed + 2,
+            "split": cfg.seed + 3, "shuffle": cfg.seed + 4,
+            "main_noise": noise_base + 101, "broad_noise": noise_base + 102}

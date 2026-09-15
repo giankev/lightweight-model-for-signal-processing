@@ -56,7 +56,7 @@ def make_deterministic_symbols_tf(cfg: SimConfig, N: int, num_symbols: int, bits
     return {"bits": bits, "x": x}
 
 def simulate_full_frames_ofdm_tf(cfg: SimConfig) -> Dict[str, Any]:
-    set_global_seed(cfg.seed)
+    set_global_seed(cfg.seed, seed_sionna=cfg.seed)
     rng = tf.random.Generator.from_seed(int(cfg.seed))
 
     N, m, k = int(cfg.num_examples), int(cfg.bits_per_symbol), int(cfg.k)
@@ -119,7 +119,7 @@ def simulate_full_frames_ofdm_tf(cfg: SimConfig) -> Dict[str, Any]:
     es = tf.reduce_mean(tf.abs(x_tx_phase) ** 2, axis=1, keepdims=True)
     no = es / (tf.reshape(ebn0_lin, [-1, 1]) * (m * R)) * overhead
 
-    noise_seed = cfg.seed if cfg.seed_noise is None else int(cfg.seed_noise)
+    noise_seed = cfg.seed + 101 if cfg.seed_noise is None else int(cfg.seed_noise)
     y_rx = awgn_manual_with_seed(x_tx_phase, no, seed=noise_seed, rdtype=cfg.tf_rdtype, cdtype=cfg.tf_cdtype)
 
     return {

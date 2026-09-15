@@ -13,8 +13,11 @@ def main() -> None:
     parser.add_argument("--num-examples", type=int, default=2000)
     parser.add_argument("--batch-size", type=int, default=128)
     parser.add_argument("--ebn0-db", type=float, nargs="+", default=list(range(13)))
-    parser.add_argument("--seed", type=int, default=None, help="Override checkpoint data seed.")
-    parser.add_argument("--seed-noise", type=int, default=None)
+    parser.add_argument("--seed", type=int, default=None, help="Evaluation data seed (default: checkpoint experiment seed + 10000).")
+    parser.add_argument("--seed-noise", type=int, default=None,
+                        help="Noise seed (default: chosen evaluation seed + 10000).")
+    parser.add_argument("--llr-scale", type=float, default=1.0,
+                        help="Fixed neural logit multiplier at every SNR (default: 1.0).")
     parser.add_argument("--device", choices=["cpu", "cuda"], default=None)
     args = parser.parse_args()
 
@@ -30,15 +33,12 @@ def main() -> None:
     config["tf_rdtype"] = tf.as_dtype(config["tf_rdtype"])
     config["tf_cdtype"] = tf.as_dtype(config["tf_cdtype"])
     config["num_examples"] = args.num_examples
-    if args.seed is not None:
-        config["seed"] = args.seed
-    if args.seed_noise is not None:
-        config["seed_noise"] = args.seed_noise
     cfg = SimConfig(**config)
     model = build_model(cfg)
     model.load_state_dict(checkpoint["model_state_dict"])
     device = args.device or ("cuda" if torch.cuda.is_available() else "cpu")
-    results = evaluate(model, cfg, args.ebn0_db, args.batch_size, device)
+    results = evaluate(model, cfg, args.ebn0_db, args.batch_size, device,
+                       llr_scale=args.llr_scale, seed=args.seed, seed_noise=args.seed_noise)
     print(json.dumps({"parameters": parameter_count(model), "results": results}, indent=2))
 
 

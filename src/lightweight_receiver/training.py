@@ -1,11 +1,12 @@
 """Dataset split and supervised training from notebook 09."""
 import random
+from dataclasses import replace
 import numpy as np
 import tensorflow as tf
 import torch
 from torch import nn
 from torch.utils.data import TensorDataset, DataLoader
-from .config import SimConfig
+from .config import SimConfig, training_seeds
 from .simulation import generate_dataset_offline
 from .models import HybridNeuralReceiverOFDM, build_model
 
@@ -26,8 +27,12 @@ def get_pytorch_ofdm_loaders(base_cfg: SimConfig, batch_size: int = 128) -> tupl
         raise ValueError("Choose a batch size leaving no singleton training batch (BatchNorm).")
     main_count = int(0.8 * base_cfg.num_examples)
 
-    cfg_main = SimConfig(**{**base_cfg.__dict__, "num_examples": main_count, "ebn0_db_min": 4.0, "ebn0_db_max": 8.0})
-    cfg_rand = SimConfig(**{**base_cfg.__dict__, "num_examples": base_cfg.num_examples - main_count, "ebn0_db_min": 0.0, "ebn0_db_max": 12.0})
+    seeds = training_seeds(base_cfg)
+    cfg_main = replace(base_cfg, num_examples=main_count, ebn0_db_min=4.0,
+                       ebn0_db_max=8.0, seed=seeds["main"], seed_noise=seeds["main_noise"])
+    cfg_rand = replace(base_cfg, num_examples=base_cfg.num_examples - main_count,
+                       ebn0_db_min=0.0, ebn0_db_max=12.0,
+                       seed=seeds["broad"], seed_noise=seeds["broad_noise"])
 
     ds_main = generate_dataset_offline(cfg_main)
     ds_rand = generate_dataset_offline(cfg_rand)
@@ -59,15 +64,20 @@ def get_pytorch_ofdm_loaders(base_cfg: SimConfig, batch_size: int = 128) -> tupl
 
     train_size = int(0.85 * len(dataset))
     val_size = len(dataset) - train_size
-    train_ds, val_ds = torch.utils.data.random_split(dataset, [train_size, val_size])
+    train_ds, val_ds = torch.utils.data.random_split(
+        dataset, [train_size, val_size],
+        generator=torch.Generator().manual_seed(seeds["split"]),
+    )
 
-    return DataLoader(train_ds, batch_size=batch_size, shuffle=True), DataLoader(val_ds, batch_size=batch_size, shuffle=False)
+    return DataLoader(train_ds, batch_size=batch_size, shuffle=True,
+                      generator=torch.Generator().manual_seed(seeds["shuffle"])), DataLoader(val_ds, batch_size=batch_size, shuffle=False)
 
 
 def train(cfg: SimConfig, device: str = "cpu") -> HybridNeuralReceiverOFDM:
     """Train and return the final-epoch model (no checkpoint selection)."""
     set_seed_all(cfg.seed)
-    torch.backends.cudnn.benchmark = True
+    torch.backends.cudnn.benchmark = False
+    torch.backends.cudnn.deterministic = True
     train_loader, val_loader = get_pytorch_ofdm_loaders(cfg, cfg.batch_size)
     model = build_model(cfg).to(device)
     optimizer = torch.optim.AdamW(model.parameters(), lr=cfg.learning_rate, weight_decay=cfg.weight_decay)
